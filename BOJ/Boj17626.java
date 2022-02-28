@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class Boj9177 {
+public class Boj17626 {
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
 
