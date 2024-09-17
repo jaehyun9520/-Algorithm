@@ -3,18 +3,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-/*
- a 포인트에서  b 포인트까지의 최단경로는  모든 공간에 장애물이 없기때문에
-
- ax,ay   bx,by 의 좌표라면?
-
- |bx-ax| + |by-ay| 이다
- 이것보다 더 짧은 거리는 있을 수 없다 여기서
- 최단 경로가 여러개인 경우는 항상 r 좌료가 변하는 이동을 c 좌표보다 먼저 해야된다고 했으니 r 먼저 움직여주면 된다
-
-
- */
-
 
 public class 충돌위험찾기 {
 
