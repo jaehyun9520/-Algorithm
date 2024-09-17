@@ -3,6 +3,19 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
+/*
+ a 포인트에서  b 포인트까지의 최단경로는  모든 공간에 장애물이 없기때문에
+
+ ax,ay   bx,by 의 좌표라면?
+
+ |bx-ax| + |by-ay| 이다
+ 이것보다 더 짧은 거리는 있을 수 없다 여기서
+ 최단 경로가 여러개인 경우는 항상 r 좌료가 변하는 이동을 c 좌표보다 먼저 해야된다고 했으니 r 먼저 움직여주면 된다
+
+
+ */
+
+
 public class 충돌위험찾기 {
 
     public static void main(String[] args) {
@@ -68,7 +81,7 @@ public class 충돌위험찾기 {
 
 
         // 마지막 진행시간  ( 처음에는 0 ,  그다음에는 1번째 포인트까지 도달하느데 걸리는 시간, 그다음은 2번째 포인트 )
-        int lastTime=0;
+        int time=0;
         // 로봇의 포인트를 순서대로 방문
         for(int i=0; i< route.length-1; i++) {
 
@@ -81,67 +94,43 @@ public class 충돌위험찾기 {
             int targetY = points[route[i+1]-1][1];
 
 
-            int[][][] visited = new int[101][101][2];
+            int diffX = targetX-startX;
+            int diffY = targetY-startY;
+            // 시작지점 포함
+            for(int j=0; j<= Math.abs(diffX) ; j++) {
+                // 맨처음 시작지점을 넣어준다
 
+                if(j!=0) {
 
-            // bfs 구성요소  ( 현재 좌표, 이전 좌표, 현재 시간)
-
-            Queue<int[]> q = new LinkedList<>();
-
-            // 시작점
-            visited[startX][startY][0]=-1;
-            visited[startX][startY][1]=-1;
-            q.add(new int[] {startX,startY,lastTime});
-
-           loop: while(!q.isEmpty()) {
-
-                int[] now =q.poll();
-
-
-                for(int k=0; k<=3; k++) {
-
-                    int nx= now[0]+dx[k];
-                    int ny= now[1]+dy[k];
-
-
-                    // 좌표를 벗어나거나 이미 방문된적이 있으면 중단
-                    if(nx<1||nx>100||ny<1||ny>100||visited[nx][ny][0]!=0) continue;
-
-
-                    visited[nx][ny][0]=now[0];
-                    visited[nx][ny][1]=now[1];
-
-
-                    // 포인트에 도달했으면 로그 기록을 위해서 현재까지의 이동을 역으로 거슬러 올라간다
-                    if(nx==targetX&&ny==targetY) {
-
-                        robotMoveLog[robotNum].put(now[2]+1,new int[] {nx,ny});
-
-                        lastTime=now[2]+1;
-                        int x=visited[nx][ny][0];
-                        int y=visited[nx][ny][1];
-                        int time = now[2];
-
-                        while(x!=-1) {
-                            robotMoveLog[robotNum].put(time, new int[]{x,y});
-                            time--;
-                            nx= visited[x][y][0];
-                            ny= visited[x][y][1];
-                            x=nx;
-                            y=ny;
-                        }
-                            break loop;
+                    if (diffX > 0) {
+                        startX++;
+                        time++;
+                    } else if (diffX < 0) {
+                        startX--;
+                        time++;
                     }
-                    q.add(new int[]{nx,ny,now[2]+1});
                 }
-            }
+                robotMoveLog[robotNum].put(time,new int[] {startX,startY});
+                }
 
+
+            for(int j=1; j<= Math.abs(diffY) ; j++) {
+                // 맨처음 시작지점을 넣어준다
+                if(diffY>0) {
+                    startY++;
+                    time++;
+                }
+
+                else if(diffY<0) {
+                    startY--;
+                    time++;
+                }
+                robotMoveLog[robotNum].put(time,new int[] {startX,startY});
+            }
 
         }
 
-            maxTime=Integer.max(maxTime,lastTime);
-
-
+            maxTime=Integer.max(maxTime,time);
 
     }
 
