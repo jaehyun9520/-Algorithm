@@ -3,6 +3,8 @@ package programmers.level2;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
 
 public class 할인행사 {
 
@@ -21,67 +23,51 @@ public class 할인행사 {
 
 
   public static int solution(String[] want, int[] number, String[] discount) {
+
     int answer = 0;
-    Map<String, Integer> map = new HashMap<>();
 
-    int[] count = new int[number.length]; // 실제 담기는 개수
-
-    for (int i = 0; i < number.length; i++) {
-      map.put(want[i], i);
-    }
-
-    // 맨 처음 시작점 10개를 담고 확인한다
-
+    Map<String, Integer> wantMap = new HashMap<>();
+    Map<String, Integer> discountMap = new HashMap<>();
     int s = 0;
     int e = 9;
-
-    for (int i = 0; i <= 9; i++) {
-      calculation(count, map, discount[i], 1);
+    for (int i = 0; i < want.length; i++) {
+      wantMap.put(want[i], number[i]);
     }
-    if (checkQuantity(count, number)) {
+
+    for (int i = 0; i < 10; i++) {
+      discountMap.put(discount[i], discountMap.getOrDefault(discount[i], 0) + 1);
+    }
+    if (validateMap(wantMap, discountMap)) {
       answer++;
     }
 
     while (e < discount.length - 1) {
 
-      calculation(count, map, discount[s], 0);
+      discountMap.put(discount[s], discountMap.get(discount[s]) - 1);
       s++;
       e++;
-      calculation(count, map, discount[e], 1);
-      if (checkQuantity(count, number)) {
+
+      discountMap.put(discount[e], discountMap.getOrDefault(discount[e], 0) + 1);
+
+      if (validateMap(wantMap, discountMap)) {
         answer++;
       }
     }
 
-    //check
-
     return answer;
   }
 
-  static void calculation(int[] count, Map<String, Integer> map, String s, int type) {
 
-    if (map.containsKey(s)) {
-      int loc = map.get(s);
+  private static boolean validateMap(Map<String, Integer> wantMap,
+      Map<String, Integer> discountMap) {
 
-      if (type == 0) {
-        count[loc]--;
-      } else if (type == 1) {
-        count[loc]++;
-      }
-    }
+    Set<String> keySet = wantMap.keySet();
 
-
-  }
-
-  static boolean checkQuantity(int[] count, int[] number) {
-
-    for (int i = 0; i < count.length; i++) {
-
-      if (count[i] != number[i]) {
+    for (String key : keySet) {
+      if (!discountMap.containsKey(key) || discountMap.get(key) != wantMap.get(key)) {
         return false;
       }
     }
-
     return true;
   }
 }
