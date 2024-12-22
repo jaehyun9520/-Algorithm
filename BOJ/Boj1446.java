@@ -134,6 +134,97 @@ public class Boj1446 {
 }
 
 // 풀이방법 3 다익스트라
+public class Boj1446 {
 
+
+  static class State implements Comparable<State> {
+
+    int loc;
+    int length;
+
+
+    State(int loc, int length) {
+      this.loc = loc;
+      this.length = length;
+    }
+
+    @Override
+    public int compareTo(State s) {
+      return this.length - s.length;
+    }
+  }
+
+
+  public static void main(String[] args) throws Exception {
+
+    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    StringTokenizer st = new StringTokenizer(in.readLine());
+
+    int shortcutCnt = Integer.parseInt(st.nextToken());
+    int highwayLen = Integer.parseInt(st.nextToken());
+
+    Map<Integer, List<int[]>> shortcutMap = new HashMap<>();
+
+    for (int i = 1; i <= shortcutCnt; i++) {
+
+      st = new StringTokenizer(in.readLine());
+
+      int s = Integer.parseInt(st.nextToken());
+      int e = Integer.parseInt(st.nextToken());
+      int len = Integer.parseInt(st.nextToken());
+
+      if (!shortcutMap.containsKey(s)) {
+
+        List<int[]> list = new ArrayList<>();
+        list.add(new int[]{e, len});
+        shortcutMap.put(s, list);
+      } else {
+        List<int[]> list = shortcutMap.get(s);
+        list.add(new int[]{e, len});
+      }
+    }
+
+    // distance 다 Integer.MAX_VALUE 로 초기화
+
+    int[] distance = new int[highwayLen + 1];
+
+    Arrays.fill(distance, Integer.MAX_VALUE);
+
+    PriorityQueue<State> pq = new PriorityQueue<>();
+
+    pq.add(new State(0, 0));
+
+    while (!pq.isEmpty()) {
+
+      State s = pq.poll();
+
+      // 아직 고속도로 안이라면?
+      if (s.loc <= highwayLen && distance[s.loc] == Integer.MAX_VALUE) {
+        distance[s.loc] = s.length;
+        pq.add(new State(s.loc + 1, distance[s.loc] + 1));
+
+        // 현재 위치에서 갈 수 있는 지름길이 존재한다면 확인
+        if (shortcutMap.containsKey(s.loc)) {
+
+          List<int[]> list = shortcutMap.get(s.loc);
+
+          for (int[] info : list) {
+            pq.add(new State(info[0], distance[s.loc] + info[1]));
+          }
+
+
+        }
+
+
+      }
+
+
+    }
+
+    System.out.println(distance[highwayLen]);
+
+
+  }
+}
 
 
